@@ -1,13 +1,11 @@
 
-const Hospital = require("../models/Hospital");
-const Appointment = require('../models/Appointment.js');
+const CoWork = require("../models/CoWork");
+const Reservation = require('../models/Reservation.js');
 
-
-
-//@desc     Get all hospitals
-//@route    GET /api/v1/hospitals
+//@desc     Get all coworks
+//@route    GET /api/v1/coworks
 //@access  Public
-exports.getHospitals = async (req, res, next) => {
+exports.getCoworks = async (req, res, next) => {
     try {
         let query;
 
@@ -27,7 +25,7 @@ exports.getHospitals = async (req, res, next) => {
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
         
         //finding resource
-        query = Hospital.find(JSON.parse(queryStr)).populate('appointments');
+        query = CoWork.find(JSON.parse(queryStr)).populate('reservations');
 
 
         // Select Fields
@@ -53,7 +51,7 @@ exports.getHospitals = async (req, res, next) => {
 
         query = query.skip(startIndex).limit(limit);
 
-        const hospitals = await query;
+        const coworks = await query;
 
         const pagination = {};
 
@@ -74,8 +72,8 @@ exports.getHospitals = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            count: hospitals.length,
-            data: hospitals
+            count: coworks.length,
+            data: coworks
         });
     }
     catch (err) {
@@ -84,21 +82,21 @@ exports.getHospitals = async (req, res, next) => {
 
 };
 
-//@desc     Get single hospital
-//@route    GET /api/v1/hospitals/:id
+//@desc     Get single cowork
+//@route    GET /api/v1/coworks/:id
 //@access   Public
-exports.getHospital = async (req, res, next) => {
+exports.getCowork = async (req, res, next) => {
 
-    const hospital = await Hospital.findById(req.params.id);
+    const cowork = await CoWork.findById(req.params.id);
 
     try {
 
-        if (!hospital) {
-            return res.status(400).json({ succes: false });
+        if (!cowork) {
+            return res.status(400).json({ success: false });
         }
 
 
-        res.status(200).json({ success: true, data: hospital });
+        res.status(200).json({ success: true, data: cowork });
     }
 
     catch (err) {
@@ -106,31 +104,31 @@ exports.getHospital = async (req, res, next) => {
     }
 };
 
-//@desc     Create new hospital
-//@route    POST /api/v1/hospitals
+//@desc     Create new cowork
+//@route    POST /api/v1/coworks
 //@access   Private
-exports.createHospital = async (req, res, next) => {
-    const hospital = await Hospital.create(req.body);
-    res.status(201).json({ success: true, data: hospital });
+exports.createCowork = async (req, res, next) => {
+    const cowork = await CoWork.create(req.body);
+    res.status(201).json({ success: true, data: cowork });
 
 };
 
-//@desc     Update hospital
-//@route    PUT /api/v1/hospitals/:id
+//@desc     Update cowork
+//@route    PUT /api/v1/coworks/:id
 //@access   Private
-exports.updateHospital = async (req, res, next) => {
+exports.updateCowork = async (req, res, next) => {
 
     try {
-        const hospital = await Hospital.findByIdAndUpdate(req.params.id, req.body, {
+        const cowork = await CoWork.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
 
-        if (!hospital) {
+        if (!cowork) {
             return res.status(400).json({ success: false });
         }
 
-        res.status(200).json({ success: true, data: hospital });
+        res.status(200).json({ success: true, data: cowork });
 
 
 
@@ -141,22 +139,22 @@ exports.updateHospital = async (req, res, next) => {
     }
 };
 
-//@desc     Delete hospital
-//@route    DELETE /api/v1/hospitals/:id
+//@desc     Delete cowork
+//@route    DELETE /api/v1/coworks/:id
 //@access   Private
-exports.deleteHospital = async (req, res, next) => {
+exports.deleteCowork = async (req, res, next) => {
 
     try {
 
-        const hospital = await Hospital.findByIdAndDelete(req.params.id);
+        const cowork = await CoWork.findByIdAndDelete(req.params.id);
 
-        if (!hospital) {
-            return res.status(400).json({ success: false,message:`Hospital not found with id of ${req.params.id}`});
+        if (!cowork) {
+            return res.status(400).json({ success: false,message:`Cowork not found with id of ${req.params.id}`});
         
         }
 
-        await Appointment.deleteMany({ hospital: req.params.id });
-        await Hospital.deleteOne({ _id: req.params.id });
+        await Reservation.deleteMany({ cowork: req.params.id });
+        await CoWork.deleteOne({ _id: req.params.id });
 
 
 

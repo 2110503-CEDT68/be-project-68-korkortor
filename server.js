@@ -8,8 +8,8 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 
 //route file
-const hospitals = require('./routes/hospitals');
-const appointments = require ('./routes/appointments')
+const coworks = require('./routes/coworks');
+const reservations = require('./routes/reservations');
 const auth = require('./routes/auth');
 
 
@@ -30,8 +30,8 @@ app.use(express.json());
 app.use (cookieParser());
 
 
-app.use('/api/v1/hospitals',hospitals);
-app.use('/api/v1/appointments',appointments);
+app.use('/api/v1/coworks',coworks);
+app.use('/api/v1/reservations',reservations);
 app.use('/api/v1/auth',auth);
 
 
