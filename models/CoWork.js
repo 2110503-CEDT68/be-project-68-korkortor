@@ -28,9 +28,15 @@ const CoWorkSchema = new mongoose.Schema({
     tel:{
         type: String
     },
-    region:{
+    opentime:{
         type: String,
-        required: [true, 'Please add a region']
+        required: [true, 'Please add an open time'],
+        match: [/^([01]\d|2[0-3]):([0-5]\d)$/, 'Please use HH:mm format'] // ex: 09:00, 18:30
+    },
+    closetime:{
+        type: String,
+        required: [true, 'Please add a close time'],
+        match: [/^([01]\d|2[0-3]):([0-5]\d)$/, 'Please use HH:mm format']
     }
 },{
     toJSON: {virtuals:true},
