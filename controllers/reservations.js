@@ -12,7 +12,7 @@ exports.getReservations = async (req, res, next) => {
     if(req.user.role !== 'admin'){
         query = Reservation.find({user: req.user.id}).populate({
             path: 'cowork',
-            select: 'name province tel'
+            select: 'name address district province postalcode tel opentime closetime'
         });
 
     } else { //If you are an admin, you can see all!
@@ -20,12 +20,12 @@ exports.getReservations = async (req, res, next) => {
             console.log(req.params.coworkId);
             query = Reservation.find({ cowork: req.params.coworkId }).populate({
                 path: "cowork",
-                select: "name province tel"
+                select: "name address district province postalcode tel opentime closetime"
             });
        }else{
             query = Reservation.find().populate({
                 path: 'cowork',
-                select: 'name province tel'
+                select: 'name address district province postalcode tel opentime closetime'
             });
        }
     }
@@ -51,7 +51,7 @@ exports.getReservation = async (req, res, next) => {
     try {
         const reservation = await Reservation.findById(req.params.id).populate({
             path: 'cowork',
-            select: 'name description tel'
+            select: 'name address district province postalcode tel opentime closetime'
         });
 
         if(!reservation){

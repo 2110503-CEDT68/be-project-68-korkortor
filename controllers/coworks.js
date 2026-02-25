@@ -47,7 +47,7 @@ exports.getCoworks = async (req, res, next) => {
         const limit = parseInt(req.query.limit, 10) || 25;
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        const total = await Hospital.countDocuments();
+        const total = await CoWork.countDocuments();
 
         query = query.skip(startIndex).limit(limit);
 
@@ -146,7 +146,7 @@ exports.deleteCowork = async (req, res, next) => {
 
     try {
 
-        const cowork = await CoWork.findByIdAndDelete(req.params.id);
+        const cowork = await CoWork.findById(req.params.id);
 
         if (!cowork) {
             return res.status(400).json({ success: false,message:`Cowork not found with id of ${req.params.id}`});

@@ -7,18 +7,16 @@ const User = require('../models/User');
 
 exports.register=async (req,res,next)=>{
     try{
-        const {name, email, password, role}=req.body;
+        const {name, telephoneNumber, email, password, role}=req.body;
 
         //Create user
         const user=await User.create({
             name,
+            telephoneNumber,
             email,
             password,
             role
         });
-
-        //const token = user.getSignedJwtToken();
-        //res.status(200).json({success:true,token});
 
         sendTokenResponse (user, 200, res);
 
@@ -93,3 +91,16 @@ exports.getMe=async(req,res,next)=>{
         data:user
     });
 };
+
+
+//@desc     Log user out / clear cookie
+//@route    GET /api/v1/auth/logout
+//@access   Private
+exports.logout = async (req, res, next) => {
+    res.cookie('token', 'none', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+    res.status(200).json({ success: true, data: {} });
+};
+
