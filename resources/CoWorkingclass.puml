@@ -1,0 +1,101 @@
+@startuml CoWorkingReservation
+left to right direction
+package "CoWorkingReservation" {
+    class "<<Application>>\nCoWorkingReservationService" as CoWorkService{}
+
+    ' Coworking
+
+    class "<<Resource>>\nCoWorks" as ResourceCoWorks {
+        <<GET>> +getCoworks(): CoWork
+        <<POST>> +createCowork(): CoWork
+    }
+
+    class "<<Resource>>\nCoWork" as ResourceCoWork {
+        <<GET>> +getCowork(): CoWork
+        <<PUT>> +updateCowork(): CoWork
+        <<DELETE>> +deleteCowork(): void
+    }
+
+    class "<<Representation>>\nCoWork" as RepresentationCoWork {
+        -name
+        -address
+        -district
+        -province
+        -postalcode
+        -telephone
+        -opentime
+        -closetime
+    }
+
+    ' Reservation
+
+    class "<<Resource>>\nReservation" as ResourceReservations {
+        <<GET>> +getReservations(): Reservation
+        <<POST>> +addReservations(): Reservation
+    }
+
+    class "<<Resource>>\nReservation" as ResourceReservation {
+        <<GET>> +getReservation(): Reservation
+        <<PUT>> +updateReservation(): Reservation
+        <<DELETE>> +deleteReservation(): void
+    }
+
+     class "<<Representation>>\nReservation" as RepresentationReservation {
+        -reserveDate
+        -user
+        -cowork
+        -createdAt
+    }
+
+    ' Authentication
+
+    class "<<Resource>>\nAuthentication" as AuthenticationController {}
+
+    class "<<Resource>>\nAuthentication" as ResourceRegister {
+        <<POST>> +register(): Token
+    }
+
+    class "<<Resource>>\nAuthentication" as ResourceLogin {
+        <<POST>> +login(): Token
+    }
+
+    class "<<Resource>>\nAuthentication" as ResourceMe {
+        <<GET>> +getMe(): User
+    }
+
+    class "<<Resource>>\nAuthentication" as ResourceLogout {
+        <<GET>> +logout(): void
+    }
+
+    class "<<Representation>>\nUser" as RepresentationUser {
+        -name
+        -tel
+        -email
+        -role
+        -password
+        -createdAt
+    }
+}
+
+' Coworking
+CoWorkService ..> ResourceCoWorks:"/coworks\n<<Path>>"
+ResourceCoWorks ..> ResourceCoWork: "/{coworkId}\n<<Path>>"
+ResourceCoWork ..> RepresentationCoWork: "<<use>>"
+
+' Reservation
+CoWorkService ..> ResourceReservations:"/reservations\n<<Path>>"
+ResourceReservations ..> ResourceReservation: "/{reserveId}\n<<Path>>"
+ResourceReservation ..> RepresentationReservation: "<<use>>"
+
+' Authentication
+CoWorkService ..> AuthenticationController:"/auth\n<<Path>>"
+AuthenticationController ..> ResourceRegister:"/register\n<<Path>>"
+AuthenticationController ..> ResourceLogin:"/login\n<<Path>>"
+AuthenticationController ..> ResourceMe:"/me\n<<Path>>"
+AuthenticationController ..> ResourceLogout:"/logout\n<<Path>>"
+ResourceRegister ..> RepresentationUser: "<<use>>"
+ResourceLogin ..> RepresentationUser: "<<use>>"
+ResourceMe ..> RepresentationUser: "<<use>>"
+ResourceLogout ..> RepresentationUser: "<<use>>"
+
+@enduml
