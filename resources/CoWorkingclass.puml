@@ -16,6 +16,10 @@ package "CoWorkingReservation" {
         <<DELETE>> +deleteCowork(): void
     }
 
+    class "<<Resource>>\nCoWork" as ResourceCoWorkReservation {
+        <<POST>> +addReservation(): Reservation
+    }
+
     class "<<Representation>>\nCoWork" as RepresentationCoWork {
         -name
         -address
@@ -81,6 +85,8 @@ package "CoWorkingReservation" {
 CoWorkService ..> ResourceCoWorks:"/coworks\n<<Path>>"
 ResourceCoWorks ..> ResourceCoWork: "/{coworkId}\n<<Path>>"
 ResourceCoWork ..> RepresentationCoWork: "<<use>>"
+ResourceCoWork ..> ResourceCoWorkReservation: "/reservations\n<<Path>>"
+ResourceCoWorkReservation ..> RepresentationReservation: "<<use>>""
 
 ' Reservation
 CoWorkService ..> ResourceReservations:"/reservations\n<<Path>>"
