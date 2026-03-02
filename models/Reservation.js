@@ -18,7 +18,13 @@ const ReservationSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    status: {
+        type: String,
+        enum: ['active','cancelled'],
+        default: 'active'
+   }
+
 });
 
 module.exports = mongoose.model('Reservation', ReservationSchema);

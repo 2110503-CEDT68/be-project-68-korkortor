@@ -90,7 +90,7 @@ exports.addReservation = async (req, res, next) => {
         req.body.user=req.user.id;
 
         //Check for existed reservation
-        const existedReservations=await Reservation.find({user:req.user.id});
+        const existedReservations=await Reservation.find({user:req.user.id ,status:'active'});
 
         //If the user is not an admin, they can only create 3 reservation.
         if(existedReservations.length >= 3 && req.user.role !== 'admin'){
@@ -132,6 +132,13 @@ exports.updateReservation = async (req, res, next) => {
         //Make sure user is the reservation owner
         if(reservation.user.toString()!== req.user.id && req.user.role !== 'admin'){
             return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this reservation`});
+        }
+
+        if (reservation.status === 'cancelled') {
+            return res.status(400).json({
+            success:false,
+            message:"Cannot update cancelled reservation"
+            });
         }
 
 
@@ -188,6 +195,61 @@ exports.deleteReservation = async (req, res, next) => {
         });
     }
 };
+
+
+//@desc     Cancel reservation
+//@route    PUT /api/v1/reservations/:id/cancel
+//@access   Private
+exports.cancelReservation = async (req, res, next) => {
+    try {
+        let reservation = await Reservation.findById(req.params.id);
+
+        if (!reservation) {
+            return res.status(404).json({
+                success: false,
+                message: "Reservation not found"
+            });
+        }
+
+        // เช็คสิทธิ์ (เจ้าของ หรือ admin)
+        if (
+            reservation.user.toString() !== req.user.id &&
+            req.user.role !== 'admin'
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Not authorized"
+            });
+        }
+
+        // ถ้าถูก cancel ไปแล้ว
+        if (reservation.status === 'cancelled') {
+            return res.status(400).json({
+                success: false,
+                message: "Reservation already cancelled"
+            });
+        }
+
+        reservation.status = 'cancelled';
+        await reservation.save();
+
+        res.status(200).json({
+            success: true,
+            data: reservation
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Cannot cancel reservation"
+        });
+    }
+};
+
+
+
+
+
 
 
 
