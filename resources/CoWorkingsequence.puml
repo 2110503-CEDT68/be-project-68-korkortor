@@ -1,0 +1,126 @@
+@startuml Manage Coworking (GET)
+
+header Coworking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Coworking (GET)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:coworks" as routerCoworks
+participant "<<controllers>>\n:coworks" as controllersCoworks
+participant "<<model>>\n:CoWork" as modelCoWork
+database "<<MongoDB>>\n:CoWork" as CoWorkDatabase
+
+client -> server ++:req.get('/api/v1/coworks')
+server -> routerCoworks ++:app.use('/api/v1/coworks',coworks)
+routerCoworks -> controllersCoworks ++:getCoworks()
+controllersCoworks -> modelCoWork ++:find(req.query)
+modelCoWork -> CoWorkDatabase ++:CoWorkSchema
+CoWorkDatabase --> modelCoWork --:cowork
+controllersCoworks <-- modelCoWork --:cowork
+controllersCoworks -> client --:response
+
+@enduml
+
+@startuml Manage Coworking (GET) Get one
+
+header Coworking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Coworking (GET) Get one"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:coworks" as routerCoworks
+participant "<<controllers>>\n:coworks" as controllersCoworks
+participant "<<model>>\n:CoWork" as modelCoWork
+database "<<MongoDB>>\n:CoWork" as CoWorkDatabase
+
+client -> server ++:req.get('/api/v1/coworks/:id')
+server -> routerCoworks ++:app.use('/api/v1/coworks',coworks)
+routerCoworks -> controllersCoworks ++:getCowork()
+controllersCoworks -> modelCoWork ++:findById(req.params.id)
+modelCoWork -> CoWorkDatabase ++:CoWorkSchema
+CoWorkDatabase --> modelCoWork --:cowork
+controllersCoworks <-- modelCoWork --:cowork
+controllersCoworks -> client --:response
+
+@enduml
+
+@startuml Manage Coworking (POST)
+
+header Coworking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Coworking (POST)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:coworks" as routerCoworks
+participant "<<controllers>>\n:coworks" as controllersCoworks
+participant "<<model>>\n:CoWork" as modelCoWork
+database "<<MongoDB>>\n:CoWork" as CoWorkDatabase
+
+client -> server ++:req.post('/api/v1/coworks')
+server -> routerCoworks ++:app.use('/api/v1/coworks',coworks)
+routerCoworks -> controllersCoworks ++:createCowork()
+controllersCoworks -> modelCoWork ++:create(req.body)
+modelCoWork -> CoWorkDatabase ++:CoWorkSchema
+CoWorkDatabase --> modelCoWork --:cowork
+controllersCoworks <-- modelCoWork --:cowork
+controllersCoworks -> client --:response
+
+@enduml
+
+@startuml Manage Coworking (PUT)
+
+header Coworking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Coworking (PUT)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:coworks" as routerCoworks
+participant "<<controllers>>\n:coworks" as controllersCoworks
+participant "<<model>>\n:CoWork" as modelCoWork
+database "<<MongoDB>>\n:CoWork" as CoWorkDatabase
+
+client -> server ++:req.put('/api/v1/coworks/:id')
+server -> routerCoworks ++:app.use('/api/v1/coworks',coworks)
+routerCoworks -> controllersCoworks ++:updateCowork()
+controllersCoworks -> modelCoWork ++:findByIdAndUpdate(req.params.id, req.body)
+modelCoWork -> CoWorkDatabase ++:CoWorkSchema
+CoWorkDatabase --> modelCoWork --:cowork
+controllersCoworks <-- modelCoWork --:cowork
+controllersCoworks -> client --:response
+
+@enduml
+
+@startuml Manage Coworking (DELETE)
+
+header Coworking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Coworking (DELETE)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:coworks" as routerCoworks
+participant "<<controllers>>\n:coworks" as controllersCoworks
+participant "<<model>>\n:Reservation" as modelReservation
+database "<<MongoDB>>\n:Reservation" as ReservationDatabase
+participant "<<model>>\n:CoWork" as modelCoWork
+database "<<MongoDB>>\n:CoWork" as CoWorkDatabase
+
+
+client -> server ++:req.delete('/api/v1/coworks/:id')
+server -> routerCoworks ++:app.use('/api/v1/coworks',coworks)
+routerCoworks -> controllersCoworks ++:deleteCowork()
+controllersCoworks -> modelCoWork ++:findById(req.params.id)
+modelCoWork -> CoWorkDatabase ++:CoWorkSchema
+CoWorkDatabase --> modelCoWork --:cowork
+controllersCoworks <-- modelCoWork --:cowork
+controllersCoworks -> modelReservation ++:deleteMany(req.params.id)
+modelReservation -> ReservationDatabase ++:ReservationSchema
+controllersCoworks -> modelCoWork ++:deleteOne(req.params.id)
+modelCoWork -> CoWorkDatabase ++:CoWorkSchema
+controllersCoworks -> client --:response
+
+@enduml
